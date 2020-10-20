@@ -8,6 +8,7 @@ html {
 }
 
 body {
+  background-color: var(--hauki-content-background-color);
   color: var(--hauki-content-text-color);
   height: 100%;
   display: flex;
