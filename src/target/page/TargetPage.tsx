@@ -7,6 +7,7 @@ import api, {
 } from '../../common/utils/api/api';
 import Collapse from '../../components/collapse/Collapse';
 import { ExternalLink } from '../../components/link/Link';
+import Openings from '../../components/openings/Openings';
 import './TargetPage.scss';
 
 const hasText = (str: string | null | undefined): boolean =>
@@ -137,6 +138,13 @@ export default function TargetPage({ id }: { id: string }): JSX.Element {
         </p>
       </TargetDetailsSection>
       <TargetSourceLink id="target-source-link" target={target} />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <Openings />
     </>
   );
 }

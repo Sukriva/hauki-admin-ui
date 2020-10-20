@@ -1,0 +1,48 @@
+.opening-fieldset {
+  margin-top: 4rem;
+}
+
+.opening-field {
+  display: flex;
+  margin-top: 2rem;
+  align-items: center;
+
+  > label {
+    font-weight: bold;
+    flex-basis: 100px;
+  }
+}
+
+.opening-input-text {
+  width: 25rem;
+
+  &:not(:first-child) {
+    margin-top: 5px;
+  }
+}
+
+.opening-day-button {
+  background-color: #d9d9d9;
+  border: 3px solid transparent;
+  display: inline-block;
+  padding: 1rem;
+  text-align: center;
+  width: 7ch;
+}
+
+.opening-day-button-active {
+  background-color: #83fada;
+  border-color: #0000bf;
+}
+
+.opening-day-button + .opening-day-button {
+  margin-left: 1rem;
+}
+
+.opening-field-time + .opening-field-time {
+  margin-left: 1rem;
+}
+
+.opening-field-desc {
+  align-items: flex-start;
+}
