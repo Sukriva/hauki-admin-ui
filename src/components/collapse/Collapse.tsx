@@ -10,7 +10,7 @@ interface BaseCollapseProps {
 type ToggleFn = () => void;
 
 interface CollapseProps extends BaseCollapseProps {
-  title: string;
+  title: ReactNode | string;
   children: ReactNode;
 }
 

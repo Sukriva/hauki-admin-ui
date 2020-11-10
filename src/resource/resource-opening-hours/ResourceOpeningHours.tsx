@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { IconInfoCircle, Navigation, Button } from 'hds-react';
-import OpeningPeriodCard from '../opening-period-card/OpeningPeriodCard';
+import OpeningPeriod from './opening-period/OpeningPeriod';
 import Collapse from '../../components/collapse/Collapse';
 import './ResourceOpeningHours.scss';
+import { DatePeriod } from '../../common/lib/types';
 
 export default function ResourceOpeningHours({
   id,
+  datePeriods,
 }: {
   id: string;
+  datePeriods: DatePeriod[];
 }): JSX.Element {
   interface LanguageOption {
     label: string;
@@ -62,11 +65,10 @@ export default function ResourceOpeningHours({
           </Button>
         </div>
       </header>
-      <div className="opening-period-cards-container">
-        <OpeningPeriodCard />
-        <OpeningPeriodCard />
-        <OpeningPeriodCard />
-        <OpeningPeriodCard />
+      <div className="opening-period-list">
+        {datePeriods.map((datePeriod: DatePeriod) => (
+          <OpeningPeriod datePeriod={datePeriod} />
+        ))}
       </div>
     </Collapse>
   );

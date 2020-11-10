@@ -1,6 +1,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Notification } from 'hds-react';
-import api, { Resource } from '../../common/utils/api/api';
+import api from '../../common/utils/api/api';
+import { Resource, DatePeriod } from '../../common/lib/types';
 import Collapse from '../../components/collapse/Collapse';
 import { ExternalLink } from '../../components/link/Link';
 import ResourceOpeningHours from '../resource-opening-hours/ResourceOpeningHours';
@@ -86,6 +87,7 @@ const ResourceSourceLink = ({
 
 export default function ResourcePage({ id }: { id: string }): JSX.Element {
   const [resource, setResource] = useState<Resource | undefined>(undefined);
+  const [datePeriods, setDatePeriods] = useState<DatePeriod[]>([]);
   const [hasError, setError] = useState<Error | undefined>(undefined);
   const [isLoading, setLoading] = useState<boolean>(true);
 
@@ -103,6 +105,21 @@ export default function ResourcePage({ id }: { id: string }): JSX.Element {
         setLoading(false);
       });
   }, [id]);
+
+  useEffect((): void => {
+    // UseEffect's callbacks are synchronous to prevent a race condition.
+    // We can not use an async function as an useEffect's callback because it would return Promise<void>
+    if (resource) {
+      api
+        .getDatePeriod(resource.id)
+        .then((ds: DatePeriod[]) => {
+          setDatePeriods(ds);
+        })
+        .catch((e: Error) => {
+          setError(e);
+        });
+    }
+  }, [resource]);
 
   if (isLoading) {
     return (
@@ -136,7 +153,7 @@ export default function ResourcePage({ id }: { id: string }): JSX.Element {
       </ResourceDetailsSection>
       <ResourceSourceLink id="resource-source-link" resource={resource} />
       <ResourceSection id="resource-opening-hours">
-        <ResourceOpeningHours id={id} />
+        <ResourceOpeningHours id={id} datePeriods={datePeriods} />
       </ResourceSection>
     </>
   );

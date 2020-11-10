@@ -63,12 +63,9 @@
   }
 }
 
-.opening-period-cards-container {
-  display: flex;
-  flex-direction: row;
-  overflow: hidden;
-  padding-top: $spacing-2-xs;
-  padding-bottom: $spacing-2-xs;
+.opening-period-list {
+  padding-top: $spacing-s;
+  padding-bottom: $spacing-s;
 }
 
 .loading-opening-hours-text {
