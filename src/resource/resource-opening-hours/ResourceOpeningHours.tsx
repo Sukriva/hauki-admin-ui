@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { IconInfoCircle, Navigation, Button } from 'hds-react';
+import React, { useEffect, useState } from 'react';
+import { IconInfoCircle, Navigation, Button, Notification } from 'hds-react';
+import api, { Resource } from '../../common/utils/api/api';
+import { DatePeriod } from '../../common/lib/types';
 import OpeningPeriod from './opening-period/OpeningPeriod';
 import Collapse from '../../components/collapse/Collapse';
 import './ResourceOpeningHours.scss';
-import { DatePeriod } from '../../common/lib/types';
 
 enum PeriodHeaderTheme {
   DEFAULT = 'DEFAULT',
@@ -72,38 +73,80 @@ const OpeningPeriodsNotFound = ({ text }: { text: string }): JSX.Element => (
   <p className="opening-periods-not-found">{text}</p>
 );
 
-export default function ResourceOpeningHours({
+const ResourcePeriodsSection = ({
   id,
-  datePeriods,
+  children,
 }: {
   id: string;
-  datePeriods: DatePeriod[];
+  children: React.ReactNode;
+}): JSX.Element => (
+  <Collapse
+    isOpen
+    collapseContentId={`${id}-opening-hours-section`}
+    title="Toimipisteen aukiolotiedot">
+    <p>
+      Toimipisteen aukiolotietoja muokataan jaksokohtaisesti. Aukiolojaksot
+      voivat olla julkaistuja tai julkaisemattomia. Alla voit selata myös
+      tulevia ja menneitä aukiolojaksoja. Näet alla myös eri kieliversiot
+      valitsemalla kielen valikosta. Huomioithan, että palvelu voi itse valita
+      aukiolojaksojen esitystavan, se ei välttämättä ole alla näkyvän kaltainen.
+    </p>
+    {children}
+  </Collapse>
+);
+
+export default function ResourceOpeningHours({
+  id,
+  resource,
+}: {
+  id: string;
+  resource: Resource;
 }): JSX.Element {
-  const [
-    defaultPeriods = [],
-    exceptionPeriods = [],
-  ]: DatePeriod[][] = datePeriods.reduce(
-    ([defaults = [], exceptions = []]: DatePeriod[][], current: DatePeriod) => {
-      return current.override
-        ? [defaults, [...exceptions, current]]
-        : [[...defaults, current], exceptions];
-    },
-    []
-  );
+  const [defaultPeriods, setDefaultPeriods] = useState<DatePeriod[]>([]);
+  const [exceptionPeriods, setExeptionPeriods] = useState<DatePeriod[]>([]);
+  const [hasError, setError] = useState<Error | undefined>(undefined);
+  const [isLoading, setLoading] = useState<boolean>(true);
+
+  useEffect((): void => {
+    // UseEffect's callbacks are synchronous to prevent a race condition.
+    // We can not use an async function as an useEffect's callback because it would return Promise<void>
+    if (resource) {
+      api
+        .getDatePeriod(resource.id)
+        .then((datePeriods: DatePeriod[]) => {
+          setDefaultPeriods(
+            datePeriods.filter((period: DatePeriod) => !period.override)
+          );
+          setExeptionPeriods(
+            datePeriods.filter((period: DatePeriod) => period.override)
+          );
+          setLoading(false);
+        })
+        .catch((e: Error) => {
+          setError(e);
+          setLoading(false);
+        });
+    }
+  }, [resource]);
+
+  if (isLoading) {
+    return (
+      <ResourcePeriodsSection id={id}>
+        <p>Toimipisteen aukiolojaksoja ladataan...</p>
+      </ResourcePeriodsSection>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <ResourcePeriodsSection id={id}>
+        <Notification label="Aukiolojaksoja ei saatu ladattua." type="error" />
+      </ResourcePeriodsSection>
+    );
+  }
 
   return (
-    <Collapse
-      isOpen
-      collapseContentId={`${id}-opening-hours-section`}
-      title="Toimipisteen aukiolotiedot">
-      <p>
-        Toimipisteen aukiolotietoja muokataan jaksokohtaisesti. Aukiolojaksot
-        voivat olla julkaistuja tai julkaisemattomia. Alla voit selata myös
-        tulevia ja menneitä aukiolojaksoja. Näet alla myös eri kieliversiot
-        valitsemalla kielen valikosta. Huomioithan, että palvelu voi itse valita
-        aukiolojaksojen esitystavan, se ei välttämättä ole alla näkyvän
-        kaltainen.
-      </p>
+    <ResourcePeriodsSection id={id}>
       <section className="opening-periods-section">
         <OpeningPeriodsHeader
           title="Aukiolojaksot"
@@ -114,7 +157,7 @@ export default function ResourceOpeningHours({
           className="opening-periods-list"
           data-test="resource-opening-periods-list">
           {defaultPeriods.length > 0 ? (
-            datePeriods.map((datePeriod: DatePeriod) => (
+            defaultPeriods.map((datePeriod: DatePeriod) => (
               <li>
                 <OpeningPeriod datePeriod={datePeriod} />
               </li>
@@ -148,6 +191,6 @@ export default function ResourceOpeningHours({
           )}
         </ul>
       </section>
-    </Collapse>
+    </ResourcePeriodsSection>
   );
 }
