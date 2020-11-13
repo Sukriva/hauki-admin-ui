@@ -1,71 +1,77 @@
 import React, { useEffect, useState } from 'react';
-import { IconInfoCircle, Navigation, Button, Notification } from 'hds-react';
+import { IconInfoCircle, Button, Notification } from 'hds-react';
 import api, { Resource } from '../../common/utils/api/api';
-import { DatePeriod } from '../../common/lib/types';
+import { DatePeriod, Language } from '../../common/lib/types';
 import OpeningPeriod from './opening-period/OpeningPeriod';
 import Collapse from '../../components/collapse/Collapse';
 import './ResourceOpeningHours.scss';
+import LanguageSelect, {
+  languageOptions,
+} from '../../components/language-selector/LanguageSelector';
 
-enum PeriodHeaderTheme {
+enum PeriodListTheme {
   DEFAULT = 'DEFAULT',
   LIGHT = 'LIGHT',
 }
 
-const OpeningPeriodsHeader = ({
+const OpeningPeriodsList = ({
   title,
-  count,
+  periods,
   theme,
+  notFoundText,
 }: {
   title: string;
-  count: number;
-  theme: PeriodHeaderTheme;
+  theme: PeriodListTheme;
+  periods: DatePeriod[];
+  notFoundText: string;
 }): JSX.Element => {
   const openingPeriodsHeaderClassName =
-    theme === PeriodHeaderTheme.LIGHT
+    theme === PeriodListTheme.LIGHT
       ? 'opening-periods-header-light'
       : 'opening-periods-header';
 
-  interface LanguageOption {
-    label: string;
-    value: string;
-  }
-
-  const languageOptions: LanguageOption[] = [
-    { label: 'Suomeksi', value: 'fi' },
-    { label: 'Svenska', value: 'sv' },
-    { label: 'English', value: 'en' },
-  ];
   const [language, setLanguage] = useState(languageOptions[0]);
-  const formatSelectedValue = ({ value }: LanguageOption): string =>
-    value.toUpperCase();
 
   return (
-    <header className={openingPeriodsHeaderClassName}>
-      <div className="opening-periods-header-container">
-        <h3 className="opening-periods-header-title">{title}</h3>
-        <IconInfoCircle
-          aria-label="Lisätietoja aukiolojaksoista nappi"
-          className="opening-periods-header-info"
-        />
-      </div>
-      <div className="opening-periods-header-container">
-        <p className="period-count">{count} jaksoa</p>
-        <Navigation.LanguageSelector
-          className="opening-periods-header-language-selector"
-          ariaLabel="Aukioloaikojen valittu kieli"
-          options={languageOptions}
-          formatSelectedValue={formatSelectedValue}
-          onLanguageChange={setLanguage}
-          value={language}
-        />
-        <Button
-          size="small"
-          className="opening-period-header-button"
-          variant="secondary">
-          Lisää uusi +
-        </Button>
-      </div>
-    </header>
+    <section className="opening-periods-section">
+      <header className={openingPeriodsHeaderClassName}>
+        <div className="opening-periods-header-container">
+          <h3 className="opening-periods-header-title">{title}</h3>
+          <IconInfoCircle
+            aria-label="Lisätietoja aukiolojaksoista nappi"
+            className="opening-periods-header-info"
+          />
+        </div>
+        <div className="opening-periods-header-container">
+          <p className="period-count">{periods.length} jaksoa</p>
+          <LanguageSelect language={language} setLanguage={setLanguage} />
+          <Button
+            size="small"
+            className="opening-period-header-button"
+            variant="secondary">
+            Lisää uusi +
+          </Button>
+        </div>
+      </header>
+      <ul
+        className="opening-periods-list"
+        data-test="resource-opening-periods-list">
+        {periods.length > 0 ? (
+          periods.map((datePeriod: DatePeriod) => (
+            <li>
+              <OpeningPeriod
+                datePeriod={datePeriod}
+                language={language.value as Language}
+              />
+            </li>
+          ))
+        ) : (
+          <li>
+            <OpeningPeriodsNotFound text={notFoundText} />
+          </li>
+        )}
+      </ul>
+    </section>
   );
 };
 
@@ -140,57 +146,30 @@ export default function ResourceOpeningHours({
   if (hasError) {
     return (
       <ResourcePeriodsSection id={id}>
-        <Notification label="Aukiolojaksoja ei saatu ladattua." type="error" />
+        <p>
+          <Notification
+            label="Aukiolojaksoja ei saatu ladattua."
+            type="error"
+          />
+        </p>
       </ResourcePeriodsSection>
     );
   }
 
   return (
     <ResourcePeriodsSection id={id}>
-      <section className="opening-periods-section">
-        <OpeningPeriodsHeader
-          title="Aukiolojaksot"
-          count={defaultPeriods.length}
-          theme={PeriodHeaderTheme.DEFAULT}
-        />
-        <ul
-          className="opening-periods-list"
-          data-test="resource-opening-periods-list">
-          {defaultPeriods.length > 0 ? (
-            defaultPeriods.map((datePeriod: DatePeriod) => (
-              <li>
-                <OpeningPeriod datePeriod={datePeriod} />
-              </li>
-            ))
-          ) : (
-            <li>
-              <OpeningPeriodsNotFound text="Ei aukiolojaksoja." />
-            </li>
-          )}
-        </ul>
-      </section>
-      <section className="opening-periods-section">
-        <OpeningPeriodsHeader
-          title="Poikkeusaukiolojaksot"
-          count={exceptionPeriods.length}
-          theme={PeriodHeaderTheme.LIGHT}
-        />
-        <ul
-          className="opening-periods-list"
-          data-test="resource-exception-opening-periods-list">
-          {exceptionPeriods.length > 0 ? (
-            exceptionPeriods.map((datePeriod: DatePeriod) => (
-              <li>
-                <OpeningPeriod datePeriod={datePeriod} />
-              </li>
-            ))
-          ) : (
-            <li>
-              <OpeningPeriodsNotFound text="Ei poikkeusaukiolojaksoja." />
-            </li>
-          )}
-        </ul>
-      </section>
+      <OpeningPeriodsList
+        title="Aukiolojaksot"
+        theme={PeriodListTheme.DEFAULT}
+        periods={defaultPeriods}
+        notFoundText="Ei aukiolojaksoja."
+      />
+      <OpeningPeriodsList
+        title="Poikkeusaukiolojaksot"
+        theme={PeriodListTheme.LIGHT}
+        periods={exceptionPeriods}
+        notFoundText="Ei poikkeusaukiolojaksoja."
+      />
     </ResourcePeriodsSection>
   );
 }

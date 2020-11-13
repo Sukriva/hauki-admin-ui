@@ -1,6 +1,11 @@
-type Language = 'fi' | 'sv' | 'en';
+export type Language = 'fi' | 'sv' | 'en';
 
-type LanguageStrings = {
+export type LanguageOption = {
+  label: string;
+  value: Language;
+};
+
+export type LanguageStrings = {
   [x in Language]: string | null;
 };
 

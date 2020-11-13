@@ -5,25 +5,35 @@ import Collapse from '../../components/collapse/Collapse';
 import { ExternalLink } from '../../components/link/Link';
 import ResourceOpeningHours from '../resource-opening-hours/ResourceOpeningHours';
 import './ResourcePage.scss';
+import LanguageSelect, {
+  languageOptions,
+} from '../../components/language-selector/LanguageSelector';
+import { Language, LanguageOption } from '../../common/lib/types';
 
 const hasText = (str: string | null | undefined): boolean =>
   str !== undefined && str !== null && str !== '';
 
-const ResourceInfo = ({ resource }: { resource?: Resource }): JSX.Element => (
+const ResourceInfo = ({
+  resource,
+  language,
+  setLanguage,
+}: {
+  resource?: Resource;
+  language: LanguageOption;
+  setLanguage: (language: LanguageOption) => void;
+}): JSX.Element => (
   <>
     <h1 data-test="resource-info" className="resource-info-title">
       {resource?.name?.fi}
     </h1>
-    {hasText(resource?.address?.fi) && (
-      <div>
-        <span>Osoite: </span>
-        <address className="resource-info-address">
-          {hasText(resource?.address?.fi)
-            ? resource?.address?.fi
-            : 'Toimipisteellä ei ole osoitetta.'}
-        </address>
-      </div>
-    )}
+    <LanguageSelect language={language} setLanguage={setLanguage} />
+    <div>
+      <span>Osoite: </span>
+      <address className="resource-info-address">
+        {resource?.address?.[language.value] ||
+          'Toimipisteellä ei ole osoitetta.'}
+      </address>
+    </div>
   </>
 );
 
@@ -88,6 +98,7 @@ export default function ResourcePage({ id }: { id: string }): JSX.Element {
   const [resource, setResource] = useState<Resource | undefined>(undefined);
   const [hasError, setError] = useState<Error | undefined>(undefined);
   const [isLoading, setLoading] = useState<boolean>(true);
+  const [language, setLanguage] = useState(languageOptions[0]);
 
   useEffect((): void => {
     // UseEffect's callbacks are synchronous to prevent a race condition.
@@ -126,7 +137,11 @@ export default function ResourcePage({ id }: { id: string }): JSX.Element {
 
   return (
     <>
-      <ResourceInfo resource={resource} />
+      <ResourceInfo
+        resource={resource}
+        language={language}
+        setLanguage={setLanguage}
+      />
       <ResourceDetailsSection id="resource-description" title="Perustiedot">
         <p className="resource-description-text">
           {hasText(resource?.description?.fi)

@@ -1,12 +1,24 @@
 import React from 'react';
-import { DatePeriod } from '../../../common/lib/types';
+import {
+  DatePeriod,
+  Language,
+  LanguageStrings,
+} from '../../../common/lib/types';
 import { formatDateRange } from '../../../common/utils/date-time/format';
 import './OpeningPeriod.scss';
 
+const notFoundName: LanguageStrings = {
+  fi: '-- Suomenkielinen nimi puuttuu --',
+  sv: '-- Ruotsinkielinen nimi puuttuu --',
+  en: '-- Englanninkielinen nimi puuttuu --',
+};
+
 export default function OpeningPeriod({
   datePeriod,
+  language = 'fi',
 }: {
   datePeriod: DatePeriod;
+  language: Language;
 }): JSX.Element {
   return (
     <div className="opening-period">
@@ -20,7 +32,7 @@ export default function OpeningPeriod({
           </div>
         </div>
         <div className="opening-period-title">
-          <h4>{datePeriod.name?.fi}</h4>
+          <h4>{datePeriod.name?.[language] || notFoundName[language]}</h4>
         </div>
       </div>
     </div>
