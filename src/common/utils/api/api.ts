@@ -123,6 +123,16 @@ async function apiPost<T>({
   });
 }
 
+async function apiDelete<T>({ path }: GetParameters): Promise<T> {
+  return request<T>({
+    url: `${apiBaseUrl}/v1${path}/`,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    method: 'delete',
+  });
+}
+
 interface AuthTestResponse {
   message: string;
   username: string;
@@ -159,6 +169,11 @@ export default {
     apiPost<DatePeriod>({
       path: `${datePeriodBasePath}`,
       data: datePeriod,
+    }),
+
+  deleteDatePeriod: (id: number | undefined): Promise<{ success: boolean }> =>
+    apiDelete<{ success: boolean }>({
+      path: `${datePeriodBasePath}/${id}`,
     }),
 
   testAuth: (): Promise<AuthTestResponse> =>
