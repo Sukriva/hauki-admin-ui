@@ -3,20 +3,24 @@ import { useHistory } from 'react-router-dom';
 import { Navigation } from 'hds-react';
 import api from '../../common/utils/api/api';
 import { AuthContextProps, TokenKeys, useAuth } from '../../auth/auth-context';
+import { useToast } from '../notification/toastContext';
 import './HaukiNavigation.scss';
-import toast from '../notification/Toast';
 
 export default function HaukiNavigation(): JSX.Element {
   const authProps: Partial<AuthContextProps> = useAuth();
   const { authTokens, clearAuth } = authProps;
   const history = useHistory();
   const isAuthenticated = !!authTokens;
+  const { showToast } = useToast();
 
-  const showSignOutErrorNotification = (text: string): void =>
-    toast.error({
+  const showSignOutErrorNotification = (text: string): void => {
+    showToast({
+      key: 'invalid-sign-out',
+      type: 'error',
       label: 'Uloskirjautuminen epäonnistui',
       text,
     });
+  };
 
   const signOut = async (): Promise<void> => {
     try {

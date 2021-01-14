@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { IconPenLine, IconTrash } from 'hds-react';
 import { DatePeriod, Language } from '../../../common/lib/types';
 import { formatDateRange } from '../../../common/utils/date-time/format';
-import toast from '../../../components/notification/Toast';
+import { useToast } from '../../../components/notification/toastContext';
 import { displayLangVersionNotFound } from '../../../components/language-select/LanguageSelect';
 import {
   ConfirmationModal,
@@ -28,6 +28,8 @@ export default function OpeningPeriod({
     endDate: datePeriod.end_date,
   });
   const deleteModalTitle = 'Oletko varma että haluat poistaa aukiolojakson?';
+  const { showToast } = useToast();
+
   const DeleteModalText = (): JSX.Element => (
     <>
       <p>Olet poistamassa aukiolojakson</p>
@@ -88,13 +90,18 @@ export default function OpeningPeriod({
             if (datePeriod.id) {
               try {
                 await deletePeriod(datePeriod.id);
-                toast.success({
+
+                showToast({
+                  key: `delete-success-${datePeriod.id}`,
+                  type: 'success',
                   label: 'Aukiolo poistettu onnistuneesti',
                   text: `Aukiolo "${name}" poistettu onnistuneesti.`,
                   dataTestId: 'date-period-delete-success',
                 });
               } catch (_) {
-                toast.error({
+                showToast({
+                  key: `delete-error-${datePeriod.id}`,
+                  type: 'error',
                   label: 'Aukiolon poisto epäonnistui',
                   text:
                     'Aukiolon poisto epäonnistui. Yritä myöhemmin uudelleen.',

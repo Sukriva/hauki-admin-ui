@@ -19,7 +19,7 @@ const apiBaseUrl: string = window.ENV?.API_URL || 'http://localhost:8000';
 const resourceBasePath = '/resource';
 const datePeriodBasePath = '/date_period';
 const authRequiredTest = '/auth_required_test';
-const invalidateAuthPath = '/invalidate_signature';
+const invalidateAuthPath = '/invalidatedddddd_signature';
 
 interface RequestParameters {
   [key: string]:

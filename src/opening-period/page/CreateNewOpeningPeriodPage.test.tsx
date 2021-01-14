@@ -9,6 +9,7 @@ import {
 } from '../../common/lib/types';
 import api from '../../common/utils/api/api';
 import CreateNewOpeningPeriodPage from './CreateNewOpeningPeriodPage';
+import { ToastProvider } from '../../components/notification/toastContext';
 
 function getElementOrThrow(
   container: Element | null,
@@ -339,7 +340,9 @@ describe(`<CreateNewOpeningPeriodPage />`, () => {
       );
 
     const { container } = render(
-      <CreateNewOpeningPeriodPage resourceId="tprek:8100" />
+      <ToastProvider>
+        <CreateNewOpeningPeriodPage resourceId="tprek:8100" />
+      </ToastProvider>
     );
 
     if (!container) {
@@ -397,7 +400,9 @@ describe(`<CreateNewOpeningPeriodPage />`, () => {
 
   it('should show success notification on successful form submit', async () => {
     const { container } = render(
-      <CreateNewOpeningPeriodPage resourceId="tprek:8100" />
+      <ToastProvider>
+        <CreateNewOpeningPeriodPage resourceId="tprek:8100" />
+      </ToastProvider>
     );
 
     if (!container) {
@@ -430,7 +435,9 @@ describe(`<CreateNewOpeningPeriodPage />`, () => {
 
   it('should show success notification when form is submitted with multiple time spans', async () => {
     const { container } = render(
-      <CreateNewOpeningPeriodPage resourceId="tprek:8100" />
+      <ToastProvider>
+        <CreateNewOpeningPeriodPage resourceId="tprek:8100" />
+      </ToastProvider>
     );
 
     if (!container) {

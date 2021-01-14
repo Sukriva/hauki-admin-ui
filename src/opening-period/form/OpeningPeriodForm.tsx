@@ -12,7 +12,7 @@ import {
 import { transformDateToApiFormat } from '../../common/utils/date-time/format';
 import Datepicker from '../../components/datepicker/Datepicker';
 import { PrimaryButton, SecondaryButton } from '../../components/button/Button';
-import toast from '../../components/notification/Toast';
+import { useToast } from '../../components/notification/toastContext';
 import {
   formatApiTimeSpansToFormFormat,
   formatTimeSpansToApiFormat,
@@ -56,6 +56,7 @@ export default function OpeningPeriodForm({
   errorTextAndLabel: NotificationTexts;
 }): JSX.Element {
   const language = Language.FI;
+  const { showToast } = useToast();
   const {
     resourceState: resourceStateConfig,
     timeSpanGroup: { rule: ruleConfig },
@@ -167,14 +168,19 @@ export default function OpeningPeriodForm({
       };
       const updatedPeriod = await submitFn(dataAsDatePeriod);
       if (updatedPeriod) {
-        toast.success({
+        showToast({
+          key: `period-form-success-${datePeriod?.id}`,
+          type: 'success',
           dataTestId: 'opening-period-form-success',
           label: successTextAndLabel.label,
           text: successTextAndLabel.text,
         });
+        history.push(`/resource/${resourceId}`);
       }
     } catch (err) {
-      toast.error({
+      showToast({
+        key: `period-form-error-${datePeriod?.id}`,
+        type: 'error',
         dataTestId: 'opening-period-form-error',
         label: errorTextAndLabel.label,
         text: errorTextAndLabel.text,
