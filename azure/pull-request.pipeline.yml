@@ -33,14 +33,8 @@ steps:
     CI=true yarn test-cypress-with-test-api
   displayName: 'Yarn run cypress (e2e) tests'
 
-- task: PublishTestResults@2
-  condition: succeededOrFailed()
-  inputs:
-    testRunner: JUnit
-    testResultsFiles: '$(Build.SourcesDirectory)/cypress/videos/*.mp4'
-
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)/build'
+    PathtoPublish: '$(Build.SourcesDirectory)/cypress/videos/*.mp4'
     ArtifactName: 'drop'
     publishLocation: 'Container'
