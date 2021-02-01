@@ -237,7 +237,7 @@ describe(`<CreateNewOpeningPeriodPage />`, () => {
       .mockImplementation(() => Promise.resolve(testResource));
 
     jest
-      .spyOn(api, 'getDatePeriodFormOptions')
+      .spyOn(api, 'getDatePeriodFormConfig')
       .mockImplementation(() => Promise.resolve(testDatePeriodConfig));
 
     jest
@@ -266,7 +266,7 @@ describe(`<CreateNewOpeningPeriodPage />`, () => {
   });
 
   it('should show loading indicator while loading date period form options', async () => {
-    jest.spyOn(api, 'getDatePeriodFormOptions').mockImplementation(() => {
+    jest.spyOn(api, 'getDatePeriodFormConfig').mockImplementation(() => {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       return new Promise(() => {});
     });
@@ -314,7 +314,7 @@ describe(`<CreateNewOpeningPeriodPage />`, () => {
       .mockImplementationOnce((e) => e);
 
     jest
-      .spyOn(api, 'getDatePeriodFormOptions')
+      .spyOn(api, 'getDatePeriodFormConfig')
       .mockImplementation(() => Promise.reject(error));
 
     render(<CreateNewOpeningPeriodPage resourceId="tprek:8100" />);

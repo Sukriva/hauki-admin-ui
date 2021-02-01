@@ -227,7 +227,7 @@ export default {
       path: `${datePeriodBasePath}/${datePeriodId}`,
     }),
 
-  getDatePeriodFormOptions: async (): Promise<UiDatePeriodConfig> => {
+  getDatePeriodFormConfig: async (): Promise<UiDatePeriodConfig> => {
     const response = await apiOptions<DatePeriodOptions>({
       path: `${datePeriodBasePath}`,
     });

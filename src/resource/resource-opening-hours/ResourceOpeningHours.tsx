@@ -133,7 +133,7 @@ export default function ResourceOpeningHours({
     try {
       const [apiDatePeriods, uiDatePeriodOptions] = await Promise.all([
         api.getDatePeriods(id),
-        api.getDatePeriodFormOptions(),
+        api.getDatePeriodFormConfig(),
       ]);
       const datePeriodLists = partitionByOverride(apiDatePeriods);
       setDividedDatePeriods(datePeriodLists);

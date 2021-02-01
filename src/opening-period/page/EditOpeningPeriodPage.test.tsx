@@ -246,7 +246,7 @@ describe(`<EditNewOpeningPeriodPage />`, () => {
       .mockImplementation(() => Promise.resolve(testResource));
 
     jest
-      .spyOn(api, 'getDatePeriodFormOptions')
+      .spyOn(api, 'getDatePeriodFormConfig')
       .mockImplementation(() => Promise.resolve(testDatePeriodOptions));
 
     jest

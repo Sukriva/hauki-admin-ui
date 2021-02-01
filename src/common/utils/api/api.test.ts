@@ -211,7 +211,7 @@ describe('apiRequest', () => {
       };
 
       mockedAxios.request.mockResolvedValue({ data: datePeriodOptions });
-      const response = await api.getDatePeriodFormOptions();
+      const response = await api.getDatePeriodFormConfig();
       expect(response).toEqual({
         resourceState: {
           options: [

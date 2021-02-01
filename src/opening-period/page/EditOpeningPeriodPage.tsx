@@ -45,7 +45,7 @@ export default function EditOpeningPeriodPage({
         ] = await Promise.all([
           api.getResource(resourceId),
           api.getDatePeriod(id),
-          api.getDatePeriodFormOptions(),
+          api.getDatePeriodFormConfig(),
         ]);
         setResource(apiResource);
         setDatePeriod(apiDatePeriod);

@@ -36,7 +36,7 @@ export default function CreateNewOpeningPeriodPage({
       try {
         const [apiResource, uiDatePeriodOptions] = await Promise.all([
           api.getResource(resourceId),
-          api.getDatePeriodFormOptions(),
+          api.getDatePeriodFormConfig(),
         ]);
         setResource(apiResource);
         setDatePeriodConfig(uiDatePeriodOptions);
