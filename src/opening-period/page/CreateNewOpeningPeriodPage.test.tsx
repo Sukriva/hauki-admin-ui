@@ -565,36 +565,4 @@ describe(`<CreateNewOpeningPeriodPage />`, () => {
       ).toThrow();
     });
   });
-
-  it('Should show required indicator when title is not set', async () => {
-    let container: Element;
-
-    await act(async () => {
-      container = render(<CreateNewOpeningPeriodPage resourceId="tprek:8100" />)
-        .container;
-
-      if (!container) {
-        throw new Error(
-          'Something went wrong in rendering of CreateNewOpeningPeriodPage'
-        );
-      }
-    });
-
-    // try submit form without any input data:
-    await act(async () => {
-      // Try submit form
-      const submitFormButton = getElementOrThrow(
-        container,
-        '[data-test="publish-opening-period-button"]'
-      );
-      fireEvent.submit(submitFormButton);
-    });
-
-    await act(async () => {
-      const requiredIndicator = await screen.findByText(
-        'Aukiolojakson otsikko on pakollinen'
-      );
-      expect(requiredIndicator).toBeInTheDocument();
-    });
-  });
 });

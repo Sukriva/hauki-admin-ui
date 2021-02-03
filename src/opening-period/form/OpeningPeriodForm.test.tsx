@@ -1,6 +1,6 @@
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { getElementOrThrow } from '../../../test/test-utils';
 import {
   DatePeriod,
@@ -176,7 +176,36 @@ const renderOpeningPeriodForm = (props: OpeningPeriodFormProps): Element => {
 };
 
 describe(`<OpeningPeriodForm />`, () => {
-  describe(`TimeSpanGroups`, () => {
+  describe('Validations', () => {
+    it('Should show required indicator when title is not set', async () => {
+      let container: Element;
+
+      await act(async () => {
+        container = renderOpeningPeriodForm(
+          defaultProps as OpeningPeriodFormProps
+        );
+      });
+
+      // try submit form without any input data:
+      await act(async () => {
+        // Try submit form
+        const submitFormButton = getElementOrThrow(
+          container,
+          '[data-test="publish-opening-period-button"]'
+        );
+        fireEvent.submit(submitFormButton);
+      });
+
+      await act(async () => {
+        const requiredIndicator = await screen.findByText(
+          'Aukiolojakson otsikko on pakollinen'
+        );
+        expect(requiredIndicator).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('TimeSpanGroups', () => {
     afterEach(() => {
       jest.clearAllMocks();
     });
