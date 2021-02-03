@@ -167,6 +167,9 @@ describe(`<CreateNewOpeningPeriodPage />`, () => {
 
   beforeEach(() => {
     testDatePeriodConfig = {
+      name: {
+        max_length: 255,
+      },
       resourceState: {
         options: [
           {

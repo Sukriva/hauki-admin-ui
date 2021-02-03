@@ -25,6 +25,9 @@ const closedResourceState = {
 };
 
 const testDatePeriodOptions: UiDatePeriodConfig = {
+  name: {
+    max_length: 255,
+  },
   resourceState: {
     options: [
       {

@@ -18,6 +18,9 @@ jest.mock('react-router-dom', () => ({
 }));
 
 const testDatePeriodOptions: UiDatePeriodConfig = {
+  name: {
+    max_length: 255,
+  },
   resourceState: {
     options: [],
   },

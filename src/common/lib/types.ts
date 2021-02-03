@@ -76,9 +76,14 @@ export type InputOption = {
   value: string;
 };
 
+export type TextFieldConfig = {
+  max_length?: number;
+};
+
 export type DatePeriodOptions = {
   actions: {
     POST: {
+      name: TextFieldConfig;
       resource_state: {
         choices: ApiChoice[];
       };
@@ -118,6 +123,7 @@ export type UiRuleConfig = {
 };
 
 export type UiDatePeriodConfig = {
+  name: TextFieldConfig;
   resourceState: UiFieldConfig;
   timeSpanGroup: {
     rule: UiRuleConfig;

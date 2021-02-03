@@ -2,6 +2,7 @@ import React from 'react';
 import { FieldErrors } from 'react-hook-form/dist/types/errors.d';
 import { TextArea, TextInput } from 'hds-react';
 import './OpeningPeriodDescription.scss';
+import { TextFieldConfig } from '../../common/lib/types';
 
 type TFieldValues = {
   openingPeriodTitle: string;
@@ -10,12 +11,16 @@ type TFieldValues = {
 export default function OpeningPeriodDescription({
   register,
   errors,
+  nameFieldConfig,
 }: {
   register: Function;
   errors: FieldErrors<TFieldValues>;
+  nameFieldConfig: TextFieldConfig;
 }): JSX.Element {
   const hasError =
     errors.openingPeriodTitle && errors.openingPeriodTitle.type === 'required';
+
+  const titleMaxLength: number | undefined = nameFieldConfig.max_length;
 
   return (
     <>
@@ -31,11 +36,15 @@ export default function OpeningPeriodDescription({
           data-test="openingPeriodTitle"
           id="openingPeriodTitle"
           aria-invalid={errors.openingPeriodTitle ? 'true' : 'false'}
-          ref={register({ required: true, maxLength: 100 })}
+          ref={register({
+            required: true,
+            maxLength: titleMaxLength,
+          })}
           helperText={
             hasError ? 'Aukiolojakson otsikko on pakollinen' : undefined
           }
           invalid={hasError}
+          {...(titleMaxLength ? { maxLength: titleMaxLength } : {})}
         />
       </div>
       <div className="form-control">

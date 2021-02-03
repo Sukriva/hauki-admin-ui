@@ -232,15 +232,16 @@ export default {
       path: `${datePeriodBasePath}`,
     });
 
-    const resourceStateChoices = response.actions.POST.resource_state.choices;
+    const configResponse = response.actions.POST;
+
+    const resourceStateChoices = configResponse.resource_state.choices;
 
     const resourceStateOptions: InputOption[] = resourceStateChoices.map(
       convertApiChoiceToInputOption
     );
 
     const timeSpanGroupOptions =
-      response.actions.POST.time_span_groups.child.children.rules.child
-        .children;
+      configResponse.time_span_groups.child.children.rules.child.children;
 
     const ruleContextOptions: InputOption[] = timeSpanGroupOptions.context.choices.map(
       convertApiChoiceToInputOption
@@ -255,6 +256,7 @@ export default {
     );
 
     return {
+      name: configResponse.name,
       resourceState: {
         options: resourceStateOptions,
       },

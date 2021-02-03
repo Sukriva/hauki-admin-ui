@@ -65,6 +65,7 @@ export default function OpeningPeriodForm({
 }: OpeningPeriodFormProps): JSX.Element {
   const language = Language.FI;
   const {
+    name: nameFieldConfig,
     resourceState: resourceStateConfig,
     timeSpanGroup: { rule: ruleConfig },
   } = datePeriodConfig;
@@ -171,7 +172,11 @@ export default function OpeningPeriodForm({
       className="opening-period-form"
       onSubmit={handleSubmit(onSubmit)}>
       <section className="form-section">
-        <OpeningPeriodDescription register={register} errors={errors} />
+        <OpeningPeriodDescription
+          register={register}
+          errors={errors}
+          nameFieldConfig={nameFieldConfig}
+        />
       </section>
       <section className="form-section">
         <h3 className="opening-period-section-title">Ajanjakso</h3>
