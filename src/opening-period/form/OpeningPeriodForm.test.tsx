@@ -203,6 +203,37 @@ describe(`<OpeningPeriodForm />`, () => {
         expect(requiredIndicator).toBeInTheDocument();
       });
     });
+
+    it('Should show required indicator when title is not set', async () => {
+      let container: Element;
+
+      await act(async () => {
+        container = renderOpeningPeriodForm({
+          ...defaultProps,
+          datePeriod: {
+            ...baseTestDatePeriod,
+            start_date: '2021-2-2',
+            end_date: '2021-2-1',
+          },
+        } as OpeningPeriodFormProps);
+      });
+
+      // try submit form with invalid date range:
+      await act(async () => {
+        const submitFormButton = getElementOrThrow(
+          container,
+          '[data-test="publish-opening-period-button"]'
+        );
+        fireEvent.submit(submitFormButton);
+      });
+
+      await act(async () => {
+        const requiredIndicator = await screen.findByText(
+          'Aukiolojakson alkupäivämäärä ei voi olla loppupäivämäärän jälkeen.'
+        );
+        expect(requiredIndicator).toBeInTheDocument();
+      });
+    });
   });
 
   describe('TimeSpanGroups', () => {
