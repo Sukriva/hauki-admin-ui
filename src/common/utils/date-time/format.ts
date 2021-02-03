@@ -9,6 +9,9 @@ export const datetimeFormFormat = `${dateFormFormat} HH:mm`;
 export const formatDate = (date: string): string =>
   format(new Date(date), dateFormFormat);
 
+export const parseFormDate = (date: string): Date =>
+  parse(date, dateFormFormat, new Date());
+
 export const formatDateRange = ({
   startDate,
   endDate,
@@ -28,7 +31,7 @@ export const formatDateRange = ({
 };
 
 export const transformDateToApiFormat = (formDate: string): string =>
-  format(parse(formDate, dateFormFormat, new Date()), dateApiFormat);
+  format(parseFormDate(formDate), dateApiFormat);
 
 export const dropMilliseconds = (time: string): string => time.slice(0, -3);
 

@@ -32,6 +32,11 @@ const datetimeRegex = /^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}$/;
 
 type TimeObject = { hours: number; minutes: number };
 
+export type DatepickerError = {
+  type: string;
+  text?: string;
+};
+
 function getTimeObjects(interval = 15): TimeObject[] {
   const times: TimeObject[] = [];
 
@@ -50,7 +55,7 @@ export type DatepickerProps = {
   disabled?: boolean;
   helperText?: string;
   id: string;
-  invalidText?: string;
+  error?: DatepickerError;
   labelText?: string;
   onBlur?: () => void;
   onChange: (value?: Date | null) => void;
@@ -60,6 +65,9 @@ export type DatepickerProps = {
   hideLabel?: boolean;
   required?: boolean;
   registerFn: Function;
+  customValidations?: {
+    [key: string]: (date: string | null) => boolean | string;
+  };
 };
 
 const Datepicker: React.FC<DatepickerProps> = ({
@@ -68,7 +76,7 @@ const Datepicker: React.FC<DatepickerProps> = ({
   value,
   id,
   helperText,
-  invalidText,
+  error,
   labelText,
   onChange,
   onBlur,
@@ -77,6 +85,7 @@ const Datepicker: React.FC<DatepickerProps> = ({
   hideLabel,
   required,
   registerFn,
+  customValidations,
 }) => {
   const [times] = useState(() =>
     getTimeObjects(minuteInterval || minuteInterval)
@@ -350,8 +359,8 @@ const Datepicker: React.FC<DatepickerProps> = ({
         <InputWrapper
           className={className}
           id={id}
-          helperText={invalidText || helperText}
-          invalid={!!invalidText}
+          helperText={error?.text ?? helperText}
+          invalid={!!error}
           labelText={labelText}
           hideLabel={hideLabel}
           hasIcon
@@ -360,10 +369,13 @@ const Datepicker: React.FC<DatepickerProps> = ({
             name={id}
             id={id}
             ref={(ref): void => {
-              registerFn(ref, { required });
+              registerFn(ref, {
+                required,
+                ...(customValidations ? { validate: customValidations } : {}),
+              });
             }}
             className={
-              invalidText
+              error
                 ? 'hds-text-input__input datepickerInput invalid'
                 : 'hds-text-input__input datepickerInput'
             }

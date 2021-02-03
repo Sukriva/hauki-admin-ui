@@ -9,7 +9,11 @@ import {
   TimeSpanFormFormat,
   TimeSpanGroupFormFormat,
 } from '../../common/lib/types';
-import { transformDateToApiFormat } from '../../common/utils/date-time/format';
+import { isDateBefore } from '../../common/utils/date-time/compare';
+import {
+  parseFormDate,
+  transformDateToApiFormat,
+} from '../../common/utils/date-time/format';
 import Datepicker from '../../components/datepicker/Datepicker';
 import {
   PrimaryButton,
@@ -52,6 +56,20 @@ export type OpeningPeriodFormProps = {
   submitFn: (datePeriod: DatePeriod) => Promise<DatePeriod>;
   successTextAndLabel: NotificationTexts;
   errorTextAndLabel: NotificationTexts;
+};
+
+const validateStartInputWithEndDate = (end: Date | null) => (
+  start: string | null
+): boolean | string => {
+  if (!start || !end) {
+    return true;
+  }
+
+  if (!isDateBefore(parseFormDate(start), end)) {
+    return 'Aukiolojakson alkupäivämäärä ei voi olla loppupäivämäärän jälkeen.';
+  }
+
+  return true;
 };
 
 export default function OpeningPeriodForm({
@@ -188,7 +206,11 @@ export default function OpeningPeriodForm({
               labelText="Alkaa"
               onChange={(value): void => setPeriodBeginDate(value || null)}
               value={periodBeginDate}
+              error={errors.openingPeriodBeginDate}
               registerFn={register}
+              customValidations={{
+                dateRange: validateStartInputWithEndDate(periodEndDate),
+              }}
             />
             <p className="dash-between-begin-and-end-date">—</p>
             <Datepicker
@@ -200,6 +222,16 @@ export default function OpeningPeriodForm({
               registerFn={register}
             />
           </section>
+          {errors.openingPeriodBeginDate?.type === 'dateRange' && (
+            <div className="hds-text-input__helper-text opening-period-error-text">
+              <span className="text-danger">
+                <IconAlertCircle />
+              </span>
+              <span className="text-danger">
+                {errors.openingPeriodBeginDate.message}
+              </span>
+            </div>
+          )}
         </div>
       </section>
       {timeSpanGroupFields.map(
